@@ -147,9 +147,9 @@ class Ball {
       ) {
         this.vy = -this.vy;
         bonusFired = true;
-        if (brick.isSpecial) {
-          bonus.push(new Bonus(brick.x, brick.y, true));
-        }
+        // if (brick.isSpecial) {
+        bonus.push(new Bonus(brick.x, brick.y, true));
+        // }
         bricks.splice(index, 1);
       }
     });
