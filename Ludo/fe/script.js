@@ -10,6 +10,8 @@ UNIT_HOME_SIZE = 30;
 UNIT_HOME_GAP = 15;
 UNIT_OUTER_RADIUS = 15;
 UNIT_INNER_RADIUS = 10;
+UNIT_OUTER_RADIUS_PLAY = 12;
+UNIT_INNER_RADIUS_PLAY = 8;
 PATH_BOX_LENGTH = 30;
 PATH_BOX_BREADTH = 155 / 6;
 
@@ -409,3 +411,51 @@ class UNIT {
     this.color = color;
   }
 }
+
+console.log(path[2]);
+
+ctx.beginPath();
+ctx.fillStyle = "red";
+ctx.arc(
+  path[2].pos.x + PATH_BOX_BREADTH / 2,
+  path[2].pos.y + PATH_BOX_LENGTH / 2,
+  UNIT_OUTER_RADIUS_PLAY,
+  0,
+  Math.PI * 2
+);
+ctx.fill();
+ctx.stroke();
+ctx.closePath();
+ctx.beginPath();
+ctx.arc(
+  path[2].pos.x + PATH_BOX_BREADTH / 2,
+  path[2].pos.y + PATH_BOX_LENGTH / 2,
+  UNIT_INNER_RADIUS_PLAY,
+  0,
+  Math.PI * 2
+);
+ctx.stroke();
+ctx.closePath();
+
+ctx.beginPath();
+ctx.fillStyle = "green";
+ctx.arc(
+  path[38].pos.x + PATH_BOX_LENGTH / 2,
+  path[38].pos.y + PATH_BOX_BREADTH / 2,
+  UNIT_OUTER_RADIUS_PLAY,
+  0,
+  Math.PI * 2
+);
+ctx.fill();
+ctx.stroke();
+ctx.closePath();
+ctx.beginPath();
+ctx.arc(
+  path[38].pos.x + PATH_BOX_LENGTH / 2,
+  path[38].pos.y + PATH_BOX_BREADTH / 2,
+  UNIT_INNER_RADIUS_PLAY,
+  0,
+  Math.PI * 2
+);
+ctx.stroke();
+ctx.closePath();
