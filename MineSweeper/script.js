@@ -104,7 +104,7 @@ function updateMinesCount() {
     }
   }
   const remainingMines = MINE_COUNT - flagCount;
-  minesCountDOM.textContent = `Mines remaining: ${remainingMines}`;
+  minesCountDOM.textContent = `Mines remaining🚩: ${remainingMines}`;
 }
 
 function drawBoard() {
@@ -130,13 +130,13 @@ function drawBoard() {
           );
         }
       } else if (flagged[i][j]) {
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = "lightgreen";
         ctx.fillRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         ctx.fillStyle = "white";
         ctx.font = `${Math.floor(CELL_SIZE * 0.5)}px Arial`;
         ctx.textAlign = "center";
         ctx.fillText(
-          "M",
+          "🚩",
           i * CELL_SIZE + CELL_SIZE / 2,
           j * CELL_SIZE + CELL_SIZE / 2 + CELL_SIZE * 0.2
         );
