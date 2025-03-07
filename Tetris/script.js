@@ -187,16 +187,16 @@ document.addEventListener("keydown", (e) => {
   if (gameOver) return;
 
   switch (e.key) {
-    case "ArrowLeft":
+    case "a":
       if (canMove(-1, 0)) currentPiece.x--;
       break;
-    case "ArrowRight":
+    case "d":
       if (canMove(1, 0)) currentPiece.x++;
       break;
-    case "ArrowDown":
+    case "s":
       if (canMove(0, 1)) currentPiece.y++;
       break;
-    case "ArrowUp":
+    case "w":
       rotate();
       break;
   }
