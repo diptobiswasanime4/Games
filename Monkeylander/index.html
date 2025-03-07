@@ -2,13 +2,85 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>MonkeyLander Game</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #111;
+        font-family: Arial, sans-serif;
+      }
+      canvas {
+        display: block;
+        margin: 20px auto;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"><rect width="800" height="600" fill="%23000033"/><circle cx="150" cy="80" r="60" fill="%23FFFF99"/><circle cx="700" cy="500" r="4" fill="white"/><circle cx="650" cy="300" r="3" fill="white"/><circle cx="500" cy="100" r="2" fill="white"/><circle cx="350" cy="400" r="3" fill="white"/><circle cx="250" cy="250" r="2" fill="white"/><circle cx="100" cy="350" r="2" fill="white"/><circle cx="750" cy="150" r="3" fill="white"/><circle cx="450" cy="550" r="2" fill="white"/><circle cx="600" cy="450" r="3" fill="white"/><circle cx="400" cy="300" r="2" fill="white"/><circle cx="200" cy="500" r="3" fill="white"/><circle cx="300" cy="150" r="2" fill="white"/></svg>');
+        border: 2px solid white;
+      }
+      #game-container {
+        width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .controls {
+        color: white;
+        margin: 10px 0;
+        font-size: 16px;
+      }
+      #stats {
+        color: white;
+        margin: 10px 0;
+        font-size: 18px;
+        display: flex;
+        justify-content: space-around;
+      }
+      .game-over {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        display: none;
+      }
+      button {
+        background: #4caf50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
-    <canvas id="canvas" width="400" height="400"></canvas>
-    <script type="module" src="/main.js"></script>
+    <div id="game-container">
+      <h1 style="color: white; text-shadow: 0 0 5px #ffd700">MonkeyLander</h1>
+      <div id="stats">
+        <div>Fuel: <span id="fuel">1000</span></div>
+        <div>Altitude: <span id="altitude">0</span></div>
+        <div>Speed: <span id="speed">0</span></div>
+      </div>
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
+      <div class="controls">
+        Use ARROW KEYS to control the lander. ↑ for thrust, ← and → to rotate.
+      </div>
+      <div id="gameOver" class="game-over">
+        <h2 id="gameOverMessage">Game Over</h2>
+        <p id="gameOverDetails"></p>
+        <button id="restartButton">Play Again</button>
+      </div>
+    </div>
+    <script src="script.js"></script>
   </body>
 </html>
