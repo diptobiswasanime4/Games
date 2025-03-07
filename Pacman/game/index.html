@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pac-Man Game</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #000;
+        font-family: Arial, sans-serif;
+      }
+      canvas {
+        border: 2px solid #00f;
+        background-color: #000;
+      }
+      .game-container {
+        text-align: center;
+      }
+      h1 {
+        color: yellow;
+        margin-bottom: 20px;
+      }
+      .score-display {
+        color: white;
+        font-size: 20px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <h1>PAC-MAN</h1>
+      <canvas width="500" height="500"></canvas>
+      <div class="score-display">Score: <span id="score">0</span></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
