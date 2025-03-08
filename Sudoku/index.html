@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sudoku Game</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+      }
+      #controls {
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="sudokuCanvas" width="450" height="450"></canvas>
+    <div id="controls">
+      <input
+        type="number"
+        id="numberInput"
+        min="1"
+        max="9"
+        placeholder="Enter 1-9"
+      />
+      <button onclick="clearCell()">Clear</button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sudoku Game</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+      }
+      #controls {
+        margin: 10px;
+      }
+      button {
+        margin: 0 5px;
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="sudokuCanvas" width="450" height="450"></canvas>
+    <div id="controls">
+      <button onclick="revealSolution()">Reveal Solution</button>
+      <button onclick="newGame()">New Game</button>
+    </div>
+
+    <script src="script2.js"></script>
+  </body>
+</html>
