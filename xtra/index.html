@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mines Complete</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+      h2 {
+        margin-bottom: 0;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        font-family: Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Minesweeper🏁</h2>
+    <p id="minesCount">Remaining mines🚩: 15</p>
+    <canvas></canvas>
+    <select id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <button onclick="startGame()">Start Game</button>
+    <script src="script.js"></script>
+  </body>
+</html>
