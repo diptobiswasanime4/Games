@@ -15,7 +15,7 @@ const COLORS = [
   "yellow", // O
   "orange", // L
   "green", // S
-  "purple", // T
+  "violet", // T
   "red", // Z
 ];
 
@@ -179,7 +179,6 @@ function update() {
   }
 
   draw();
-  setTimeout(update, 500);
 }
 
 // Handle keyboard input
@@ -204,4 +203,6 @@ document.addEventListener("keydown", (e) => {
 });
 
 // Start game
-update();
+setInterval(() => {
+  update();
+}, 500);
