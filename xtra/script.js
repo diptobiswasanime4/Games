@@ -1,238 +1,207 @@
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
-// canvas.width = 400;
-// canvas.height = 400;
+canvas.width = 500;
+canvas.height = 500;
 
-// Game settings
-let GRID_SIZE = 10;
-let CELL_SIZE = 40;
-let MINE_COUNT = 15;
+const SIDE = 25;
+const COLS = 20;
+const ROWS = 20;
 
-const minesCountDOM = document.getElementById("minesCount");
-const difficulty = document.getElementById("difficulty");
+// Colors for different pieces
+const COLORS = [
+  "cyan", // I
+  "blue", // J
+  "yellow", // O
+  // "orange", // L
+  // "green", // S
+  // "purple", // T
+  // "red", // Z
+];
 
-console.log(difficulty.value);
+// Tetromino shapes (relative coordinates)
+const SHAPES = [
+  [
+    [0, 0],
+    [1, 0],
+    [2, 0],
+    [3, 0],
+  ], // I
+  [
+    [0, 0],
+    [0, 1],
+    [1, 1],
+    [2, 1],
+  ], // J
+  [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+  ], // O
+  // [
+  //   [0, 1],
+  //   [1, 1],
+  //   [2, 1],
+  //   [2, 0],
+  // ], // L
+  // [
+  //   [0, 1],
+  //   [1, 1],
+  //   [1, 0],
+  //   [2, 0],
+  // ], // S
+  // [
+  //   [0, 1],
+  //   [1, 1],
+  //   [1, 0],
+  //   [2, 1],
+  // ], // T
+  // [
+  //   [0, 0],
+  //   [1, 0],
+  //   [1, 1],
+  //   [2, 1],
+  // ], // Z
+];
 
-let board = [];
-let revealed = [];
-let flagged = [];
+// Game state
+let board = Array(ROWS)
+  .fill()
+  .map(() => Array(COLS).fill(null));
+let currentPiece = null;
 let gameOver = false;
+let score = 0;
 
-function setDifficulty() {
-  switch (difficulty.value) {
-    case "easy":
-      GRID_SIZE = 8;
-      MINE_COUNT = 8;
-      canvas.width = 320;
-      canvas.height = 320;
-      CELL_SIZE = 40;
-      break;
-    case "medium":
-      GRID_SIZE = 10;
-      MINE_COUNT = 15;
-      canvas.width = 400;
-      canvas.height = 400;
-      CELL_SIZE = 40;
-      break;
-    case "hard":
-      GRID_SIZE = 12;
-      MINE_COUNT = 30;
-      canvas.width = 480;
-      canvas.height = 480;
-      CELL_SIZE = 40;
-      break;
-  }
+// Create new piece
+function newPiece() {
+  const type = Math.floor(Math.random() * SHAPES.length);
+  return {
+    shape: SHAPES[type],
+    color: COLORS[type],
+    x: Math.floor(COLS / 2) - 1,
+    y: 0,
+  };
 }
 
-// Initialize game
-function initGame() {
-  board = []; // Reset arrays
-  revealed = [];
-  flagged = [];
-
-  for (let i = 0; i < GRID_SIZE; i++) {
-    board[i] = [];
-    revealed[i] = [];
-    flagged[i] = [];
-    for (let j = 0; j < GRID_SIZE; j++) {
-      board[i][j] = 0;
-      revealed[i][j] = false;
-      flagged[i][j] = false;
-    }
-  }
-
-  let minesPlaced = 0;
-  while (minesPlaced < MINE_COUNT) {
-    let x = Math.floor(Math.random() * GRID_SIZE);
-    let y = Math.floor(Math.random() * GRID_SIZE);
-    if (board[x][y] !== "M") {
-      board[x][y] = "M";
-      minesPlaced++;
-    }
-  }
-
-  for (let i = 0; i < GRID_SIZE; i++) {
-    for (let j = 0; j < GRID_SIZE; j++) {
-      if (board[i][j] !== "M") {
-        board[i][j] = countMines(i, j);
-      }
-    }
-  }
-  updateMinesCount();
-}
-
-function countMines(x, y) {
-  let count = 0;
-  for (let i = -1; i <= 1; i++) {
-    for (let j = -1; j <= 1; j++) {
-      let newX = x + i;
-      let newY = y + j;
-      if (newX >= 0 && newX < GRID_SIZE && newY >= 0 && newY < GRID_SIZE) {
-        if (board[newX][newY] === "M") count++;
-      }
-    }
-  }
-  return count;
-}
-
-function updateMinesCount() {
-  let flagCount = 0;
-  for (let i = 0; i < GRID_SIZE; i++) {
-    for (let j = 0; j < GRID_SIZE; j++) {
-      if (flagged[i][j]) flagCount++;
-    }
-  }
-  const remainingMines = MINE_COUNT - flagCount;
-  minesCountDOM.textContent = `Mines remaining🚩: ${remainingMines}`;
-}
-
-function drawBoard() {
+// Draw the board and pieces
+function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  for (let i = 0; i < GRID_SIZE; i++) {
-    for (let j = 0; j < GRID_SIZE; j++) {
-      ctx.strokeStyle = "black";
-      ctx.strokeRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-      if (revealed[i][j]) {
-        if (board[i][j] === "M") {
-          ctx.fillStyle = "red";
-          ctx.fillRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        } else if (board[i][j] > 0) {
-          ctx.fillStyle = "black";
-          ctx.font = `${Math.floor(CELL_SIZE * 0.5)}px Arial`; // Scale font with cell size
-          ctx.textAlign = "center";
-          ctx.fillText(
-            board[i][j],
-            i * CELL_SIZE + CELL_SIZE / 2,
-            j * CELL_SIZE + CELL_SIZE / 2 + CELL_SIZE * 0.2
-          );
-        }
-      } else if (flagged[i][j]) {
-        ctx.fillStyle = "lightgreen";
-        ctx.fillRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        ctx.fillStyle = "white";
-        ctx.font = `${Math.floor(CELL_SIZE * 0.5)}px Arial`;
-        ctx.textAlign = "center";
-        ctx.fillText(
-          "🚩",
-          i * CELL_SIZE + CELL_SIZE / 2,
-          j * CELL_SIZE + CELL_SIZE / 2 + CELL_SIZE * 0.2
-        );
-      } else {
-        ctx.fillStyle = "lightblue";
-        ctx.fillRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  // Draw grid
+  ctx.strokeStyle = "#333";
+  for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
+      ctx.strokeRect(x * SIDE, y * SIDE, SIDE, SIDE);
+      if (board[y][x]) {
+        ctx.fillStyle = board[y][x];
+        ctx.fillRect(x * SIDE, y * SIDE, SIDE - 1, SIDE - 1);
       }
+    }
+  }
+
+  // Draw current piece
+  if (currentPiece) {
+    ctx.fillStyle = currentPiece.color;
+    currentPiece.shape.forEach(([dx, dy]) => {
+      const x = currentPiece.x + dx;
+      const y = currentPiece.y + dy;
+      ctx.fillRect(x * SIDE, y * SIDE, SIDE - 1, SIDE - 1);
+    });
+  }
+
+  // Draw score
+  ctx.fillStyle = "white";
+  ctx.font = "20px Arial";
+  ctx.fillText(`Score: ${score}`, 10, 30);
+}
+
+// Check if piece can move to position
+function canMove(dx = 0, dy = 0, shape = currentPiece.shape) {
+  return shape.every(([px, py]) => {
+    const x = currentPiece.x + px + dx;
+    const y = currentPiece.y + py + dy;
+    return (
+      x >= 0 && x < COLS && y < ROWS && (y < 0 || !board[y] || !board[y][x])
+    );
+  });
+}
+
+// Merge piece into board
+function merge() {
+  currentPiece.shape.forEach(([dx, dy]) => {
+    const x = currentPiece.x + dx;
+    const y = currentPiece.y + dy;
+    if (y >= 0) board[y][x] = currentPiece.color;
+  });
+  clearLines();
+  currentPiece = newPiece();
+  if (!canMove()) gameOver = true;
+}
+
+// Clear completed lines
+function clearLines() {
+  for (let y = ROWS - 1; y >= 0; y--) {
+    if (board[y].every((cell) => cell)) {
+      board.splice(y, 1);
+      board.unshift(Array(COLS).fill(null));
+      score += 100;
+      y++;
     }
   }
 }
 
-function reveal(x, y) {
-  if (
-    x < 0 ||
-    x >= GRID_SIZE ||
-    y < 0 ||
-    y >= GRID_SIZE ||
-    revealed[x][y] ||
-    gameOver ||
-    flagged[x][y]
-  )
+// Rotate piece
+function rotate() {
+  const rotated = currentPiece.shape.map(([x, y]) => [-y, x]);
+  if (canMove(0, 0, rotated)) {
+    currentPiece.shape = rotated;
+  }
+}
+
+// Game loop
+function update() {
+  if (gameOver) {
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.font = "40px Arial";
+    ctx.fillText("Game Over", 150, 250);
     return;
-
-  revealed[x][y] = true;
-
-  if (board[x][y] === "M") {
-    gameOver = true;
-    alert("Game Over! You hit a mine!");
-    revealAll();
-  } else if (board[x][y] === 0) {
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        reveal(x + i, y + j);
-      }
-    }
   }
-  drawBoard();
-  checkWin();
+
+  if (!currentPiece) currentPiece = newPiece();
+
+  if (canMove(0, 1)) {
+    currentPiece.y++;
+  } else {
+    merge();
+  }
+
+  draw();
+  setTimeout(update, 500);
 }
 
-function revealAll() {
-  for (let i = 0; i < GRID_SIZE; i++) {
-    for (let j = 0; j < GRID_SIZE; j++) {
-      revealed[i][j] = true;
-    }
-  }
-  drawBoard();
-}
-
-function checkWin() {
-  let unrevealedCount = 0;
-  for (let i = 0; i < GRID_SIZE; i++) {
-    for (let j = 0; j < GRID_SIZE; j++) {
-      if (!revealed[i][j] && board[i][j] !== "M") {
-        unrevealedCount++;
-      }
-    }
-  }
-  if (unrevealedCount === 0) {
-    gameOver = true;
-    alert("Congratulations! You won!");
-  }
-}
-
-canvas.addEventListener("click", function (e) {
+// Handle keyboard input
+document.addEventListener("keydown", (e) => {
   if (gameOver) return;
 
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
-  const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
-
-  reveal(x, y);
-});
-
-canvas.addEventListener("contextmenu", function (e) {
-  e.preventDefault();
-  if (gameOver) return;
-
-  const rect = canvas.getBoundingClientRect();
-  const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
-  const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
-
-  if (!revealed[x][y]) {
-    flagged[x][y] = !flagged[x][y];
-    drawBoard();
-    updateMinesCount();
+  switch (e.key) {
+    case "a":
+      if (canMove(-1, 0)) currentPiece.x--;
+      break;
+    case "d":
+      if (canMove(1, 0)) currentPiece.x++;
+      break;
+    case "s":
+      if (canMove(0, 1)) currentPiece.y++;
+      break;
+    case "w":
+      rotate();
+      break;
   }
+  draw();
 });
 
-function startGame() {
-  gameOver = false;
-  setDifficulty(); // Set canvas size and game parameters
-  initGame();
-  drawBoard();
-  updateMinesCount();
-}
-
-// Initial game start with default medium settings
-startGame();
+// Start game
+update();
